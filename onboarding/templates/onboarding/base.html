@@ -1,0 +1,17 @@
+{% extends 'allianceauth/base-bs5.html' %}
+
+{% load i18n %}
+
+{% block page_title %}
+    {% translate "Example Plugin" %}
+{% endblock %}
+
+{% block header_nav_brand %}
+    {% translate "Example Plugin" %}
+{% endblock header_nav_brand %}
+
+{% block content %}
+    <div class="allianceauth-onboarding-plugin">
+        {% block details %}{% endblock %}
+    </div>
+{% endblock %}

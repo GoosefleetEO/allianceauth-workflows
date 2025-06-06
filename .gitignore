@@ -1,0 +1,17 @@
+/build/
+/dist/
+/*.egg-info/
+.idea/
+.tox/
+htmlcov/
+node_modules/
+
+*.log
+*.tmp
+*.bak
+*.old
+__pycache__
+.coverage
+/coverage.xml
+alliance_auth.sqlite3
+.vs

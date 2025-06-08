@@ -7,9 +7,12 @@ from django.apps import AppConfig
 from onboarding import __version__
 
 
-class ExampleConfig(AppConfig):
+class OnboardingConfig(AppConfig):
     """App Config"""
 
     name = "onboarding"
     label = "onboarding"
-    verbose_name = f"Example App v{__version__}"
+    verbose_name = f"Onboarding Wizards v{__version__}"
+
+    def ready(self):
+        import onboarding.signals

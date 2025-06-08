@@ -5,8 +5,8 @@ requires = [
 ]
 
 [project]
-name = "aa-onboarding-plugin"
-description = "Example Plugin for Alliance Auth (GitHub Version)"
+name = "allianceauth-onboarding"
+description = "Onboarding wizards for Allianceauth"
 readme = "README.md"
 keywords = [
     "allianceauth",
@@ -14,7 +14,7 @@ keywords = [
 ]
 license = { file = "LICENSE" }
 authors = [
-    { name = "Peter Pfeufer", email = "develop@ppfeufer.de" },
+    { name = "corgski", email = "hello@nyetscape.net" },
 ]
 requires-python = ">=3.10"
 classifiers = [
@@ -39,8 +39,8 @@ dynamic = [
 dependencies = [
     "allianceauth>=4.3.1,<5",
 ]
-urls.Changelog = "https://github.com/ppfeufer/aa-onboarding-plugin/blob/master/CHANGELOG.md"
-urls."Issue / Bug Reports" = "https://github.com/ppfeufer/aa-onboarding-plugin/issues"
+urls.Changelog = "https://github.com/gooseflockEO/allianceauth-onboarding/CHANGELOG.md"
+urls."Issue / Bug Reports" = "https://github.com/gooseflockEO/allianceauth-onboarding/issues"
 
 [tool.hatch.version]
 path = "onboarding/__init__.py"

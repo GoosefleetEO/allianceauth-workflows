@@ -11,7 +11,7 @@ from allianceauth.services.hooks import MenuItemHook, UrlHook
 from onboarding import urls
 
 
-class ExampleMenuItem(MenuItemHook):
+class OnboardingMenuItem(MenuItemHook):
     """This class ensures only authorized users will see the menu entry"""
 
     def __init__(self):
@@ -37,11 +37,11 @@ class ExampleMenuItem(MenuItemHook):
 def register_menu():
     """Register the menu item"""
 
-    return ExampleMenuItem()
+    return OnboardingMenuItem()
 
 
 @hooks.register("url_hook")
 def register_urls():
     """Register app urls"""
 
-    return UrlHook(urls, "onboarding", r"^onboarding/")
+    return UrlHook(urls, "onboarding", r"^flows/")

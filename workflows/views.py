@@ -9,7 +9,7 @@ from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.template import Template, Context
 
-from .models import Wizard, Step, StepCompletion
+from .models import Wizard, Step, StepCompletion, ActionItem
 
 template_cache = {}
 
@@ -83,6 +83,7 @@ def _view_wizard(request: WSGIRequest, wizard: Wizard, step_id: int) -> HttpResp
         step_pct_complete = steps[current_step]['step'].pct_complete(request.user, wizard)
     else:
         step_pct_complete = 1
+        ActionItem.objects.update_or_create(user=request.user, wizard=wizard, defaults={"completed": True})
 
     context = {
         "user": request.user,

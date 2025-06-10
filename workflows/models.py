@@ -182,6 +182,9 @@ class Wizard(models.Model):
         for step in self.steps.all():
             result = result and step.is_complete(user, self)
 
+        if result:
+            ActionItem.objects.update_or_create(user=user, wizard=self, defaults={"completed": True})
+
         return result
 
     def pct_complete(self, user:User):

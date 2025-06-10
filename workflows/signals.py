@@ -37,7 +37,8 @@ def _update_action_items(user: User):
 
     new_wizards = Wizard.objects.get_user_autoassigned_wizards(user)
     for w in new_wizards.all():
-        ActionItem.objects.update_or_create(user=user,wizard=w)
+        if not w.is_complete(user):
+            ActionItem.objects.update_or_create(user=user,wizard=w)
 
 
 # copied from allianceauth-auth-reports

@@ -30,7 +30,7 @@ def state_trigger(sender, instance, **kwargs):
 
 def _update_action_items(user: User):
 
-    assigned_wizards = Wizard.objects.get_user_assigned_wizards(user)
+    assigned_wizards = Wizard.objects.get_user_assigned_wizards(user, True)
     for w in assigned_wizards.all():
         if user not in w.users:
             ActionItem.objects.filter(wizard=w).delete()

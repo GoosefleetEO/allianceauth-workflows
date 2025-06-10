@@ -4,7 +4,9 @@ from django.db.models import Q
 
 class WizardManager(models.Manager):
 
-    def get_user_assigned_wizards(self, user: User):
+    def get_user_assigned_wizards(self, user: User, get_all = False):
+        if get_all:
+            return self.filter(actionitem__user = user)
         return self.filter(actionitem__user = user, actionitem__completed = False)
 
     def get_user_autoassigned_wizards(self, user: User):

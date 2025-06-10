@@ -12,6 +12,8 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from sortedm2m.fields import SortedManyToManyField
 
+from .managers import WizardManager
+
 class General(models.Model):
     """Meta model for app permissions"""
 
@@ -95,7 +97,9 @@ class Step(models.Model):
         return f"{self.name}: {self.description}"
 
 class Wizard(models.Model):
-    
+
+    objects=WizardManager()
+
     name = models.CharField(help_text='Name', max_length=32)
     description = models.CharField(help_text='Short description', blank=True, max_length=255)
     permalink = models.SlugField(help_text='user friendly permalink slug',blank=True,null=True)

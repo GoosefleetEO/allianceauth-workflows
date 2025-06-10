@@ -7,7 +7,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
-from django.template import Template
+from django.template import Template, Context
 
 from .models import Wizard, Step, StepCompletion
 
@@ -22,7 +22,11 @@ def index(request: WSGIRequest) -> HttpResponse:
     :return:
     """
 
-    context = {"text": "Hello, World!"}
+    assigned_wizards = Wizard.objects.get_user_assigned_wizards(request.user)
+    wizards = Wizard.objects.get_user_wizards(request.user)
+
+    context = {"assigned_wizards": assigned_wizards,
+               "wizards": wizards}
 
     return render(request, "onboarding/index.html", context)
 
@@ -110,7 +114,7 @@ def _render_body_or_default(body: str, context):
         else:
             body_template = Template('')
 
-        return body_template.render(context)
+        return body_template.render(Context(context))
 
 
 def _calculate_step_checks(user: User, step: Step):

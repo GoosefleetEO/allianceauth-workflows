@@ -10,8 +10,17 @@
         </div>
 
         <div class="card-body">
-            {{ text }}
-        </div>
+            {% for w in wizards %}
+                <div class="card">
+                    <div class="card-header">
+                        {{ w.wizard.name }}
+                    </div>
+                    <div class="card-body">
+                        {{ w.wizard.description }}
+                    </div>
+                </div>
+            {% endfor %}
+            </div>
     </div>
 {% endblock %}
 

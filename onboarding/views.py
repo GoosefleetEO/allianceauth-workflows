@@ -16,17 +16,23 @@ template_cache = {}
 @login_required
 @permission_required("onboarding.basic_access")
 def index(request: WSGIRequest) -> HttpResponse:
-    """
-    Index view
-    :param request:
-    :return:
-    """
+
 
     assigned_wizards = Wizard.objects.get_user_assigned_wizards(request.user)
     wizards = Wizard.objects.get_user_wizards(request.user)
 
-    context = {"assigned_wizards": assigned_wizards,
-               "wizards": wizards}
+    assigned_metadata = []
+
+    for w in assigned_wizards:
+        assigned_metadata.append({"wizard": w, "completion": False, "percent": w.pct_complete(request.user)})
+
+    wizard_metadata = []
+
+    for w in wizards:
+        wizard_metadata.append({"wizard": w, "completion": w.is_complete(request.user), "percent": w.pct_complete(request.user)})
+
+    context = {"assigned_wizards": assigned_metadata,
+               "wizards": wizard_metadata}
 
     return render(request, "onboarding/index.html", context)
 
@@ -98,10 +104,8 @@ def _view_wizard(request: WSGIRequest, wizard: Wizard, step_id: int) -> HttpResp
 
     if not current_step:
         context['body_text'] = _render_body_or_default(wizard.body, context)
-
-        return render(request, "onboarding/final.html", context)
-
-    context['body_text'] = _render_body_or_default(current_step['step'].body, context)
+    else:
+        context['body_text'] = _render_body_or_default(current_step['step'].body, context)
 
     return render(request, "onboarding/step.html", context)
 

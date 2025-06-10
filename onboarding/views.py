@@ -58,37 +58,40 @@ def _view_wizard(request: WSGIRequest, wizard: Wizard, step_id: int) -> HttpResp
     if not request.user in wizard.users:
         raise PermissionDenied("You do not have permission to view this resource.")
 
+    step_id = step_id - 1 if step_id > 0 else None
+    c = True if request.POST.get('c') == 'true' else False
+    s = int(request.POST.get('s',0))
+
     steps = []
-    current_step = False
-    next_step = False
+    incomplete_steps = []
+    current_step = None
+    update_step = None
 
     for i, step in enumerate(wizard.steps.all()):
         step_dict = {'id': i+1,'step':step,'complete':step.is_complete(request.user, wizard),'checks':_calculate_step_checks(request.user, step)}
 
         steps.append(step_dict)
 
-        if i > 0 and i == step_id:
-            next_step = step_dict
-        elif i + 1 == step_id:
-            current_step = step_dict
+        if step.pk == s:
+            update_step = i
 
         if step_dict['complete']:
             continue
 
-        if not current_step:
-            current_step = step_dict
-            continue
+        incomplete_steps.append(i)
 
-        if not next_step:
-            next_step = step_dict
+    if c and not steps[update_step]['complete']:
+        StepCompletion.objects.update_or_create(user=request.user,wizard=wizard,step=Step.objects.get(pk=steps[update_step]['step'].pk))
+        steps[update_step]['complete'] = True
+        incomplete_steps.remove(update_step)
 
+    if step_id is not None and update_step is None and step_id < len(steps):
+        current_step = step_id
+    elif len(incomplete_steps) > 0:
+        current_step = incomplete_steps[0]
 
-    if request.POST.get('c','') == 'true' and current_step and not step_id:
-        StepCompletion.objects.create(user=request.user,wizard=wizard,step=Step.objects.get(pk=request.POST.get('s')))
-        current_step = next_step
-
-    if current_step:
-        step_pct_complete = current_step['step'].pct_complete(request.user, wizard)
+    if current_step is not None:
+        step_pct_complete = steps[current_step]['step'].pct_complete(request.user, wizard)
     else:
         step_pct_complete = 1
 
@@ -96,16 +99,16 @@ def _view_wizard(request: WSGIRequest, wizard: Wizard, step_id: int) -> HttpResp
         "user": request.user,
         "wizard": wizard,
         "steps":steps,
-        "current_step": current_step,
+        "current_step": None if current_step is None else steps[current_step],
         "review": bool(step_id),
         "total_pct_complete": wizard.pct_complete(request.user) * 100,
         "step_pct_complete":  step_pct_complete * 100,
         }
 
-    if not current_step:
+    if current_step is None:
         context['body_text'] = _render_body_or_default(wizard.body, context)
     else:
-        context['body_text'] = _render_body_or_default(current_step['step'].body, context)
+        context['body_text'] = _render_body_or_default(steps[current_step]['step'].body, context)
 
     return render(request, "onboarding/step.html", context)
 

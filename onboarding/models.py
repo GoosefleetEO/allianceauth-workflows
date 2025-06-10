@@ -46,24 +46,26 @@ class CheckFilter(models.Model):
 
 class Check(models.Model):
     name = models.CharField(help_text='Name', max_length=32)
-    description = models.CharField(help_text='Short description', blank=True, max_length=255)
+    comment = models.CharField(max_length=255, blank=True)
+    description = models.CharField(help_text='Short description for users', blank=True, max_length=255)
     filter = models.ForeignKey(CheckFilter, on_delete=models.CASCADE)
 
     def is_complete(self, user: User):
         return self.filter.filter_object.process_filter(user)
 
     def is_complete_detail(self, user: User):
-        return self.filter.filter_object.audit_filter([user])[user.pk]
+        return self.filter.filter_object.audit_filter(User.objects.filter(pk=user.pk))[user.pk]
 
 
     def __str__(self):
-        return f"{self.name}: {self.description}"
+        return f"{self.name}: {self.comment}"
 
 
 class Step(models.Model):
     name = models.CharField(help_text='Name', max_length=32)
-    description = models.CharField(help_text='Short description', blank=True, max_length=255)
-    body = models.TextField(help_text='Body text', blank=True)
+    comment = models.CharField(max_length=255, blank=True)
+    description = models.CharField(help_text='Short description for users', blank=True, max_length=255)
+    body = models.TextField(help_text='Body text (django template snippet)', blank=True)
     checks = SortedManyToManyField(Check, blank=True)
     is_selfguided = models.BooleanField(help_text="Overrides any Smart Filters assigned to this step.", default=False)
 
@@ -94,16 +96,18 @@ class Step(models.Model):
         return passed / total
 
     def __str__(self):
-        return f"{self.name}: {self.description}"
+        return f"{self.name}: {self.comment}"
 
 class Wizard(models.Model):
 
     objects=WizardManager()
 
     name = models.CharField(help_text='Name', max_length=32)
-    description = models.CharField(help_text='Short description', blank=True, max_length=255)
+    comment = models.CharField(max_length=255, blank=True)
+    description = models.CharField(help_text='Short description for users', blank=True, max_length=255)
     permalink = models.SlugField(help_text='user friendly permalink slug',blank=True,null=True)
-    body = models.TextField(help_text='Body text', blank=True)
+    body = models.TextField(help_text='Body text for final page (django template snippet)', blank=True)
+    auto_assigned = models.BooleanField(help_text="Will automatically assign to users when they meet visibility requirements", default=False)
 
     states = models.ManyToManyField(
         State,
@@ -187,7 +191,7 @@ class Wizard(models.Model):
         return passed / total
 
     def __str__(self):
-        return f"{self.name}: {self.description}"
+        return f"{self.name}: {self.comment}"
 
 class StepCompletion(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
@@ -200,6 +204,7 @@ class StepCompletion(models.Model):
 class ActionItem(models.Model):
     wizard = models.ForeignKey(Wizard,on_delete=models.CASCADE)
     user = models.ForeignKey(User,on_delete=models.CASCADE)
+    completed = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username}: {self.wizard.name}"

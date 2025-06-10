@@ -7,12 +7,38 @@ from django.dispatch import Signal, receiver
 
 from allianceauth import hooks
 
+from allianceauth.authentication.models import CharacterOwnership, UserProfile
+
 from . import models
 
+from .models import Wizard, ActionItem
+
 # signals go here
-
-
 logger = logging.getLogger(__name__)
+
+@receiver(m2m_changed, sender=User.groups.through)
+def group_trigger(sender, instance, **kwargs):
+    _update_action_items(instance)
+
+@receiver(post_save, sender=CharacterOwnership)
+def char_trigger(sender, instance, **kwargs):
+    _update_action_items(instance.user)
+
+@receiver(post_save, sender=UserProfile)
+def state_trigger(sender, instance, **kwargs):
+    _update_action_items(instance.user)
+
+def _update_action_items(user: User):
+
+    assigned_wizards = Wizard.objects.get_user_assigned_wizards(user)
+    for w in assigned_wizards.all():
+        if user not in w.users:
+            ActionItem.objects.filter(wizard=w).delete()
+
+    new_wizards = Wizard.objects.get_user_autoassigned_wizards(user)
+    for w in new_wizards.all():
+        ActionItem.objects.update_or_create(user=user,wizard=w)
+
 
 # copied from allianceauth-auth-reports
 class hook_cache:

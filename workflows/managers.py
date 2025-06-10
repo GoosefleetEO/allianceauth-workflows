@@ -7,6 +7,10 @@ class WizardManager(models.Manager):
     def get_user_assigned_wizards(self, user: User):
         return self.filter(actionitem__user = user, actionitem__completed = False)
 
+    def get_user_autoassigned_wizards(self, user: User):
+        result = self.get_user_wizards(user)
+        return result.filter(auto_assigned = True).exclude(actionitem__user = user);
+
     def get_user_wizards(self, user: User):
         assigned_wizards = Q(actionitem__user = user)
 

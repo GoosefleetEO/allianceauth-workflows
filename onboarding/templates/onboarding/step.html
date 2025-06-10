@@ -87,6 +87,12 @@
 
                     {% endfor %}
                 </table>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <input type="submit" value="Refresh" class="btn btn-outline-primary btn-lg" />
+                    </form>
+                </div>
                 {% endif %}
 
             </div>

@@ -86,14 +86,20 @@ class Step(models.Model):
         if self.checks.count() == 0:
             return 1
 
+        passed = self.count_complete(user, wizard)
+        total = self.checks.count()
+
+        return passed / total
+
+    def count_complete(self, user:User, wizard: 'Wizard'):
+        if self.is_selfguided:
+            return int(self.is_complete(user, wizard))
+
         passed = 0
-        total = 0
         for check in self.checks.all():
             if check.is_complete(user):
                 passed += 1
-            total += 1
-
-        return passed / total
+        return passed
 
     def __str__(self):
         return f"{self.name}: {self.comment}"
@@ -182,13 +188,17 @@ class Wizard(models.Model):
         if self.steps.count() == 0:
             return 1
 
-        passed = 0
-        total = 0
-        for step in self.steps.all():
-            passed += step.pct_complete(user, self)
-            total += 1
+        passed = self.count_complete(user)
+        total = self.steps.count()
 
         return passed / total
+
+    def count_complete(self, user:User):
+        passed = 0
+        for step in self.steps.all():
+            passed += step.is_complete(user, self)
+
+        return passed
 
     def __str__(self):
         return f"{self.name}: {self.comment}"

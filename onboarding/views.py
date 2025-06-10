@@ -17,22 +17,11 @@ template_cache = {}
 @permission_required("onboarding.basic_access")
 def index(request: WSGIRequest) -> HttpResponse:
 
+    assigned_wizards = _populate_wizard_list(request.user,Wizard.objects.get_user_assigned_wizards(request.user))
+    wizards = _populate_wizard_list(request.user,Wizard.objects.get_user_wizards(request.user))
 
-    assigned_wizards = Wizard.objects.get_user_assigned_wizards(request.user)
-    wizards = Wizard.objects.get_user_wizards(request.user)
-
-    assigned_metadata = []
-
-    for w in assigned_wizards:
-        assigned_metadata.append({"wizard": w, "completion": False, "percent": w.pct_complete(request.user)})
-
-    wizard_metadata = []
-
-    for w in wizards:
-        wizard_metadata.append({"wizard": w, "completion": w.is_complete(request.user), "percent": w.pct_complete(request.user)})
-
-    context = {"assigned_wizards": assigned_metadata,
-               "wizards": wizard_metadata}
+    context = {"assigned_wizards": assigned_wizards,
+               "wizards": wizards}
 
     return render(request, "onboarding/index.html", context)
 
@@ -135,3 +124,15 @@ def _calculate_step_checks(user: User, step: Step):
                      }
                  )
         return checks
+
+def _populate_wizard_list(user: User, wizards):
+    result = []
+    for w in wizards:
+        count = 0
+        total = w.steps.count()
+        for step in w.steps.all():
+            count += step.is_complete(user, w)
+
+        result.append({"wizard": w, "completion": w.is_complete(user), "percent": count/total*100, "count": count, "total": total})
+
+    return result

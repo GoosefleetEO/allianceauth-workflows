@@ -9,13 +9,9 @@ Originally envisioned as a way to guide users rhrough our auth process, this too
 Use this for whatever your heart desires, from corp applications to helping users resolve non-compliance with your audit protocols, to adding an altcorp to your alliance. If you can dream it, this can do it!
 
 ## Todo
-
-- Implement assigned tasks through ActionItem model
 - Implement wizard builder in user-facing site
 - Implement user nag for available incomplete assigned wizards
 - Index to list all available incomplete wizards
-- Allow wizards to self-assign based on availability and signals
-- Smart filter for completed wizards?
 
 ## Installation
 

@@ -55,12 +55,12 @@
     <div class="col-6">
         <div class="card card-primary">
             <div class="card-header">
-                <div class="card-title">{{ current_step.step.name }}</div>
+                <div class="card-title">{% if current_step %}{{ current_step.step.name }}{% else %}Complete!{% endif %}</div>
             </div>
 
             <div class="card-body">
-                <p class="card-text">{{ current_step.step.body | safe }}</p>
-                {% if current_step.step.is_selfguided %}
+                <p class="card-text">{{ body_text | safe }}</p>
+                {% if current_step and current_step.step.is_selfguided %}
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <form method="POST">
                         {% csrf_token %}
@@ -69,7 +69,7 @@
                         <input type="submit" value="Continue" class="btn btn-outline-primary btn-lg" />
                     </form>
                 </div>
-                {% else %}
+                {% elif current_step %}
                 <table>
                     {% for check in current_step.checks %}
                     <tr>

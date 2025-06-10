@@ -11,12 +11,15 @@
 
         <div class="card-body">
             {% for w in wizards %}
-                <div class="card">
+                <div class="card w-25">
                     <div class="card-header">
                         {{ w.wizard.name }}
                     </div>
                     <div class="card-body">
                         {{ w.wizard.description }}
+                    </div>
+                    <div class="card-footer">
+                        Completed {{w.count}}/{{w.total}}
                     </div>
                 </div>
             {% endfor %}

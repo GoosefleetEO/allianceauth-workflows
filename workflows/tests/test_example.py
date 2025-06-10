@@ -21,7 +21,7 @@ class TestExample(TestCase):
 
         super().setUpClass()
 
-    def test_onboarding(self):
+    def test_example(self):
         """
         Dummy test function
         :return:

@@ -4,9 +4,9 @@
 from django.urls import path
 
 # AA Example App
-from onboarding import views
+from workflows import views
 
-app_name: str = "onboarding"
+app_name: str = "workflows"
 
 urlpatterns = [
     path('', views.index, name='index'),

@@ -14,7 +14,7 @@ from .models import Wizard, Step, StepCompletion
 template_cache = {}
 
 @login_required
-@permission_required("onboarding.basic_access")
+@permission_required("workflows.basic_access")
 def index(request: WSGIRequest) -> HttpResponse:
 
     assigned_wizards = _populate_wizard_list(request.user,Wizard.objects.get_user_assigned_wizards(request.user))
@@ -23,10 +23,10 @@ def index(request: WSGIRequest) -> HttpResponse:
     context = {"assigned_wizards": assigned_wizards,
                "wizards": wizards}
 
-    return render(request, "onboarding/index.html", context)
+    return render(request, "workflows/index.html", context)
 
 @login_required
-@permission_required("onboarding.basic_access")
+@permission_required("workflows.basic_access")
 def view_wizard_by_permalink(request: WSGIRequest, permalink: str, step_id: int=0) -> HttpResponse:
 
     wizard = get_object_or_404(Wizard, permalink=permalink)
@@ -34,7 +34,7 @@ def view_wizard_by_permalink(request: WSGIRequest, permalink: str, step_id: int=
     return _view_wizard(request, wizard, step_id)
 
 @login_required
-@permission_required("onboarding.basic_access")
+@permission_required("workflows.basic_access")
 def view_wizard_by_id(request: WSGIRequest, wiz_id: int, step_id: int=0) -> HttpResponse:
 
     wizard = get_object_or_404(Wizard, pk=wiz_id)
@@ -99,7 +99,7 @@ def _view_wizard(request: WSGIRequest, wizard: Wizard, step_id: int) -> HttpResp
     else:
         context['body_text'] = _render_body_or_default(steps[current_step]['step'].body, context)
 
-    return render(request, "onboarding/step.html", context)
+    return render(request, "workflows/step.html", context)
 
 def _render_body_or_default(body: str, context):
         if body and body in template_cache:

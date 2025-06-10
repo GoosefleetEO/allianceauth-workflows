@@ -10,7 +10,7 @@ Test settings
 
 from .base import *
 
-PACKAGE = "onboarding"
+PACKAGE = "workflows"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
@@ -19,7 +19,7 @@ STATICFILES_DIRS = [
     f"{PACKAGE}/static",
 ]
 
-SITE_URL = "https://onboarding.com"
+SITE_URL = "https://example.com"
 CSRF_TRUSTED_ORIGINS = [SITE_URL]
 
 DISCORD_BOT_TOKEN = "My_Dummy_Token"
@@ -83,8 +83,8 @@ APPS_WITH_PUBLIC_VIEWS = []
 # https://developers.eveonline.com for Authentication
 # & API Access and fill out these settings.
 # Be sure to set the callback URL
-# to https://onboarding.com/sso/callback
-# substituting your domain for onboarding.com
+# to https://example.com/sso/callback
+# substituting your domain for example.com
 # Logging in to auth requires the publicData
 # scope (can be overridden through the
 # LOGIN_TOKEN_SCOPES setting).
@@ -92,7 +92,7 @@ APPS_WITH_PUBLIC_VIEWS = []
 ESI_SSO_CLIENT_ID = "dummy"
 ESI_SSO_CLIENT_SECRET = "dummy"
 ESI_SSO_CALLBACK_URL = "http://localhost:8000"
-ESI_USER_CONTACT_EMAIL = "dummy@onboarding.net"
+ESI_USER_CONTACT_EMAIL = "dummy@example.net"
 
 
 # ------------------------------------------------------------------------------------ #
@@ -105,7 +105,7 @@ ESI_USER_CONTACT_EMAIL = "dummy@onboarding.net"
 # or Elastic Email to send email.
 # Https://www.sparkpost.com/docs/integrations/django/
 # https://elasticemail.com/resources/settings/smtp-api/
-# Set the default from email to something like 'noreply@onboarding.com'
+# Set the default from email to something like 'noreply@example.com'
 # Email validation can be turned off by uncommenting the line below.
 # This can break some services.
 REGISTRATION_VERIFY_EMAIL = False

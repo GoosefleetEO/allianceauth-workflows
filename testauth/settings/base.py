@@ -258,7 +258,7 @@ LOGOUT_REDIRECT_URL = "authentication:dashboard"  # destination after logging ou
 # https://docs.djangoproject.com/en/1.11/topics/http/shortcuts/#redirect
 # - url names eg 'authentication:dashboard'
 # - relative urls eg '/dashboard'
-# - absolute urls eg 'http://onboarding.com/dashboard'
+# - absolute urls eg 'http://example.com/dashboard'
 
 # scopes required on new tokens when logging in. Cannot be blank.
 LOGIN_TOKEN_SCOPES = ["publicData"]

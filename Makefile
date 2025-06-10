@@ -1,5 +1,5 @@
-appname = onboarding
-package = onboarding
+appname = workflows
+package = workflows
 
 # Default goal
 .DEFAULT_GOAL := help

@@ -1,4 +1,4 @@
-# allianceauth-onboarding
+# allianceauth-workflows
 
 Wizards? In your spaceship game? It's more likely than you think!
 

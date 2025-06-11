@@ -7,9 +7,8 @@ from django.utils.translation import gettext_lazy as _
 from allianceauth import hooks
 from allianceauth.services.hooks import MenuItemHook, UrlHook
 
-# AA Example App
-from workflows import urls
-
+from . import urls
+from .views import workflows_dashboard
 
 class WorkflowMenuItem(MenuItemHook):
     """This class ensures only authorized users will see the menu entry"""
@@ -33,6 +32,10 @@ class WorkflowMenuItem(MenuItemHook):
         return ""
 
 
+class WorkflowDashboardHook(hooks.DashboardItemHook):
+    def __init__(self):
+        super().__init__(workflows_dashboard,1)
+
 @hooks.register("menu_item_hook")
 def register_menu():
     """Register the menu item"""
@@ -45,3 +48,7 @@ def register_urls():
     """Register app urls"""
 
     return UrlHook(urls, "workflows", r"^flows/")
+
+@hooks.register('dashboard_hook')
+def register_dashboard_hook():
+    return WorkflowDashboardHook()

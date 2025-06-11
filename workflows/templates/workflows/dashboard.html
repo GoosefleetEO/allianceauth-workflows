@@ -1,0 +1,34 @@
+{% load django_bootstrap5 %}
+{% load i18n %}
+{% if assigned_wizards %}
+<div id="workflows-dashboard-widget" class="col-12 mb-3">
+    <div class="card px2">
+        <div class="card-body text-center">
+            {% include "framework/dashboard/widget-title.html" with title="Outstanding Tasks" %}
+            <table class="table">
+                <tr><th scope="col">Name</th><th scope="col">Description</th><th scope="col">Completion</th><th scope="col"></th></tr>
+                {% for w in assigned_wizards %}
+                <tr>
+                    <th scope="row">
+                        {{ w.wizard.name }}
+                    </th>
+                    <td>
+                        {{ w.wizard.description }}
+                    </td>
+                    <td>
+                        {{ w.count }}/{{ w.total }}
+                    </td>
+                    <td>
+                        {% if w.wizard.permalink %}
+                        <a href="{% url 'workflows:view_wizard' w.wizard.permalink %}" class="btn btn-primary">Begin</a>
+                        {% else %}
+                        <a href="{% url 'workflows:view_wizard_by_id' w.wizard.pk %}" class="btn btn-primary">Begin</a>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+</div>
+{% endif %}

@@ -8,10 +8,16 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.models import User
 from django.template import Template, Context
+from django.template.loader import render_to_string
 
 from .models import Wizard, Step, StepCompletion, ActionItem
 
 template_cache = {}
+
+def workflows_dashboard(request):
+    context = {"assigned_wizards": _populate_wizard_list(request.user,Wizard.objects.get_user_assigned_wizards(request.user))}
+
+    return render_to_string('workflows/dashboard.html', context=context, request=request)
 
 @login_required
 @permission_required("workflows.basic_access")

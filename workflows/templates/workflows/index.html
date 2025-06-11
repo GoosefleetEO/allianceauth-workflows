@@ -4,27 +4,73 @@
 {% load humanize %}
 
 {% block details %}
-    <div class="card card-primary">
-        <div class="card-header">
-            <div class="card-title">{% translate "Headline" %}</div>
-        </div>
 
-        <div class="card-body">
-            {% for w in wizards %}
-                <div class="card w-25">
-                    <div class="card-header">
-                        {{ w.wizard.name }}
-                    </div>
-                    <div class="card-body">
-                        {{ w.wizard.description }}
-                    </div>
-                    <div class="card-footer">
-                        Completed {{w.count}}/{{w.total}}
-                    </div>
-                </div>
+{% if assigned_wizards %}
+<div class="card px2 col-12 mb-3">
+    <div class="card-body text-center">
+        {% include "framework/dashboard/widget-title.html" with title="Assigned Workflows" %}
+        <table class="table">
+            <tr><th scope="col">Name</th><th scope="col">Description</th><th scope="col">Completion</th><th scope="col"></th></tr>
+            {% for w in assigned_wizards %}
+            <tr>
+                <th scope="row">
+                    {{ w.wizard.name }}
+                </th>
+                <td>
+                    {{ w.wizard.description }}
+                </td>
+                <td>
+                    {{ w.count }}/{{ w.total }}
+                </td>
+                <td>
+                    {% if w.wizard.permalink %}
+                    <a href="{% url 'workflows:view_wizard' w.wizard.permalink %}" class="btn btn-primary">Begin</a>
+                    {% else %}
+                    <a href="{% url 'workflows:view_wizard_by_id' w.wizard.pk %}" class="btn btn-primary">Begin</a>
+                    {% endif %}
+                </td>
+            </tr>
             {% endfor %}
-            </div>
+        </table>
     </div>
+</div>
+{% endif %}
+<div class="card px2 col-12 mb-3">
+    <div class="card-body text-center">
+        {% include "framework/dashboard/widget-title.html" with title="Available Workflows" %}
+        <table class="table">
+            <tr><th scope="col">Name</th><th scope="col">Description</th><th scope="col">Completion</th><th scope="col"></th></tr>
+            {% for w in wizards %}
+            <tr>
+                <th scope="row">
+                    {{ w.wizard.name }}
+                </th>
+                <td>
+                    {{ w.wizard.description }}
+                </td>
+                <td>
+                    {{ w.count }}/{{ w.total }}
+                </td>
+                <td>
+                    {% if w.completion%}
+                        {% if w.wizard.permalink %}
+                        <a href="{% url 'workflows:view_wizard' w.wizard.permalink '1' %}" class="btn btn-success">Complete</a>
+                        {% else %}
+                        <a href="{% url 'workflows:view_wizard_by_id' w.wizard.pk '1' %}" class="btn btn-success">Complete</a>
+                        {% endif %}
+                    {% else %}
+                    {% if w.wizard.permalink %}
+                    <a href="{% url 'workflows:view_wizard' w.wizard.permalink %}" class="btn btn-primary">Begin</a>
+                    {% else %}
+                    <a href="{% url 'workflows:view_wizard_by_id' w.wizard.pk %}" class="btn btn-primary">Begin</a>
+                    {% endif %}
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_javascript %}

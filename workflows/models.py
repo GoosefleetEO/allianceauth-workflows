@@ -68,6 +68,7 @@ class Step(models.Model):
     body = models.TextField(help_text='Body text (django template snippet)', blank=True)
     checks = SortedManyToManyField(Check, blank=True)
     is_selfguided = models.BooleanField(help_text="Overrides any Smart Filters assigned to this step.", default=False)
+    visibility = models.ForeignKey(Check,help_text="When configured, will hide this step from users unless this check resolves to true or this step is the next incomplete step",blank=True, null=True, on_delete=models.CASCADE)
 
     def is_complete(self, user: User, wizard: 'Wizard'):
         if self.is_selfguided:

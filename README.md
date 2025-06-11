@@ -15,7 +15,13 @@ Use this for whatever your heart desires, from corp applications to helping user
 
 ## Installation
 
-Not production ready, don't use this.
+`pip install -U git+https://github.com/GoosefleetEO/allianceauth-workflows.git`
+
+Add `'workflows'` to `INSTALLED_APPS`
+
+`python manage.py migrate`
+
+`python manage.py onboarding_sync_filters`
 
 ## Usage
 

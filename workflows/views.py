@@ -63,7 +63,7 @@ def _view_wizard(request: WSGIRequest, wizard: Wizard, step_id: int) -> HttpResp
     update_step = None
 
     for i, step in enumerate(wizard.steps.all()):
-        step_dict = {'id': i+1,'step':step,'complete':step.is_complete(request.user, wizard),'checks':_calculate_step_checks(request.user, step),'visible':step.visiblity.is_complete(request.user) if step.visibility is not None else True}
+        step_dict = {'id': i+1,'step':step,'complete':step.is_complete(request.user, wizard),'checks':_calculate_step_checks(request.user, step),'visible':step.visibility.is_complete(request.user) if step.visibility is not None else True}
 
         steps.append(step_dict)
 

@@ -154,11 +154,17 @@ class Wizard(models.Model):
     )
     
     steps = SortedManyToManyField(Step)
-    
+
+    @property
+    def configured_visibility(self):
+        return self.states.exists() or self.groups.exists() or self.corporations.exists() or self.alliances.exists() or self.factions.exists() or self.characters.exists()
+
     @property
     def users(self):
         state_users = User.objects.filter(profile__state__in=self.states.all())
         group_users = User.objects.filter(groups__in=self.groups.all())
+        char_users = User.objects.filter(character_ownerships__character__in=self.characters.all())
+
 
         corp_ids = []
         for corp in self.corporations.all():
@@ -176,7 +182,7 @@ class Wizard(models.Model):
             faction_ids.append(faction.faction_id)
         faction_users = User.objects.filter(character_ownerships__character__faction_id__in=faction_ids)
         
-        return state_users | group_users | corp_users | alliance_users | faction_users
+        return state_users | group_users | corp_users | alliance_users | faction_users | char_users
 
     def is_complete(self, user: User):
         result = True

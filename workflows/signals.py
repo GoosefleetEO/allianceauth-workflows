@@ -18,8 +18,11 @@ logger = logging.getLogger(__name__)
 
 @receiver(m2m_changed, sender=User.groups.through)
 def group_trigger(sender, instance, **kwargs):
-    if isinstance(instance, User):
-        _update_action_items(instance)
+    try:
+        if isinstance(instance, User):
+            _update_action_items(instance)
+    except Exception:
+        logger.exception(f"Could not process update, expected User got {type(instance)}")
 
 @receiver(post_save, sender=CharacterOwnership)
 def char_trigger(sender, instance, **kwargs):

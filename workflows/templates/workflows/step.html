@@ -12,51 +12,52 @@
 {% endblock header_nav_brand %}
 
 {% block details %}
-
 <div class="container-fluid">
   <div class="row mb-3">
-    <h2 class="text-center">{{ wizard.name }}</h2>
+    <div class="col-12">
+      <h2 class="text-center">{{ wizard.name }}</h2>
+    </div>
   </div>
 
   <div class="row">
-    <!-- Left Sidebar -->
-    <div class="col-12 col-md-3 mb-3 mb-md-0">
+    <!-- Step Navigation -->
+    <div class="col-12 col-lg-3 mb-3">
       <div class="card h-100">
         <div class="card-body">
           <div class="accordion accordion-flush" id="onboardingSteps">
             {% for s in steps %}
               {% if s.step.pk == current_step.step.pk %}
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="h{{s.step.pk}}">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#c{{s.step.pk}}" aria-expanded="true" aria-controls="c{{s.step.pk}}">
-                      {% if s.complete %}
-                        <i class="fa-solid fa-check fa-fw me-2"></i>
-                      {% else %}
-                        <i class="fa-solid fa-circle-xmark fa-fw me-2"></i>
-                      {% endif %}
-                      <span>{{s.step.name}}</span>
-                    </button>
-                  </h2>
-                  <div id="c{{s.step.pk}}" class="accordion-collapse collapse show" aria-labelledby="h{{s.step.pk}}" data-bs-parent="#onboardingSteps">
-                    <div class="accordion-body">{{ s.step.description }}</div>
-                  </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="h{{s.step.pk}}">
+                  <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#c{{s.step.pk}}" aria-expanded="true" aria-controls="c{{s.step.pk}}">
+                    {% if s.complete %}
+                      <i class="fa-solid fa-check fa-fw me-2"></i>
+                    {% else %}
+                      <i class="fa-solid fa-circle-xmark fa-fw me-2"></i>
+                    {% endif %}
+                    <span>{{ s.step.name }}</span>
+                  </button>
+                </h2>
+                <div id="c{{s.step.pk}}" class="accordion-collapse collapse show" aria-labelledby="h{{s.step.pk}}" data-bs-parent="#onboardingSteps">
+                  <div class="accordion-body">{{ s.step.description }}</div>
                 </div>
+              </div>
               {% elif s.visible %}
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="h{{s.step.pk}}">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c{{s.step.pk}}" aria-expanded="false" aria-controls="c{{s.step.pk}}">
-                      {% if s.complete %}
-                        <i class="fa-solid fa-check fa-fw me-2"></i>
-                      {% else %}
-                        <i class="fa-solid fa-circle-xmark fa-fw me-2"></i>
-                      {% endif %}
-                      <span>{{s.step.name}}</span>
-                    </button>
-                  </h2>
-                  <div id="c{{s.step.pk}}" class="accordion-collapse collapse" aria-labelledby="h{{s.step.pk}}" data-bs-parent="#onboardingSteps">
-                    <div class="accordion-body">{{ s.step.description }}</div>
-                  </div>
+              <div class="accordion-item">
+                <h2 class="accordion-header" id="h{{s.step.pk}}">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c{{s.step.pk}}" aria-expanded="false" aria-controls="c{{s.step.pk}}">
+                    {% if s.complete %}
+                      <i class="fa-solid fa-check fa-fw me-2"></i>
+                    {% else %}
+                      <i class="fa-solid fa-circle-xmark fa-fw me-2"></i>
+                    {% endif %}
+                    <span>{{ s.step.name }}</span>
+                  </button>
+                </h2>
+                <div id="c{{s.step.pk}}" class="accordion-collapse collapse" aria-labelledby="h{{s.step.pk}}" data-bs-parent="#onboardingSteps">
+                  <div class="accordion-body">{{ s.step.description }}</div>
                 </div>
+              </div>
               {% endif %}
             {% endfor %}
           </div>
@@ -68,27 +69,29 @@
       </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="col-12 col-md-6 mb-3 mb-md-0">
+    <!-- Main Content Full Width -->
+    <div class="col-12 col-lg-9 mb-3">
       <div class="card h-100">
         <div class="card-header text-center">
           <h4>{% if current_step %}{{ current_step.step.name }}{% else %}Complete!{% endif %}</h4>
         </div>
 
         <div class="card-body">
-          <p>{{ body_text | safe }}</p>
+          <p class="card-text">{{ body_text | safe }}</p>
         </div>
 
         {% if current_step and current_step.step.is_selfguided %}
-          <div class="card-footer text-end">
-            <form method="POST">
-              {% csrf_token %}
-              <input type="hidden" name="s" value="{{ current_step.step.pk }}" />
-              <input type="hidden" name="c" value="true" />
-              <input type="submit" value="Continue" class="btn btn-primary btn-lg" />
-            </form>
-          </div>
+        <div class="card-footer text-end">
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="s" value="{{ current_step.step.pk }}" />
+            <input type="hidden" name="c" value="true" />
+            <input type="submit" value="Continue" class="btn btn-primary btn-lg" />
+          </form>
+        </div>
+
         {% elif current_step %}
+        <div class="card-body">
           <div class="accordion mb-3" id="check-accordion">
             <div class="accordion-item">
               <h2 class="accordion-header" id="checksHeader">
@@ -126,29 +129,21 @@
               </div>
             </div>
           </div>
+
           <div class="card-footer text-end">
             <form method="POST">
               {% csrf_token %}
               <input type="submit" value="Refresh" class="btn btn-primary btn-lg" />
             </form>
           </div>
+        </div>
         {% endif %}
       </div>
     </div>
-
-    <!-- Spacer / Optional Third Column -->
-    <div class="col-12 col-md-3 d-none d-md-block"></div>
   </div>
 </div>
-
 {% endblock %}
 
-{% block extra_javascript %}
-{% endblock %}
-
-{% block extra_css %}
-{% endblock %}
-
-{% block extra_script %}
-
-{% endblock %}
+{% block extra_javascript %}{% endblock %}
+{% block extra_css %}{% endblock %}
+{% block extra_script %}{% endblock %}

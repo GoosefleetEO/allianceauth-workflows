@@ -3,16 +3,26 @@ App Models
 Create your models in here
 """
 
+# Third Party
+from sortedm2m.fields import SortedManyToManyField
+
 # Django
-from django.db import models
-from allianceauth.authentication.models import State
-from allianceauth.eveonline.models import (EveAllianceInfo, EveCharacter, EveCorporationInfo, EveFactionInfo)
 from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from sortedm2m.fields import SortedManyToManyField
+from django.db import models
+
+# Alliance Auth
+from allianceauth.authentication.models import State
+from allianceauth.eveonline.models import (
+    EveAllianceInfo,
+    EveCharacter,
+    EveCorporationInfo,
+    EveFactionInfo,
+)
 
 from .managers import WizardManager
+
 
 class General(models.Model):
     """Meta model for app permissions"""
@@ -23,6 +33,7 @@ class General(models.Model):
         managed = False
         default_permissions = ()
         permissions = (("basic_access", "Can access this app"),)
+
 
 # shamelessly copied straight from allianceauth-secure-groups
 class CheckFilter(models.Model):
@@ -45,34 +56,49 @@ class CheckFilter(models.Model):
 
 
 class Check(models.Model):
-    name = models.CharField(help_text='Name', max_length=32)
+    name = models.CharField(help_text="Name", max_length=32)
     comment = models.CharField(max_length=255, blank=True)
-    description = models.CharField(help_text='Short description for users', blank=True, max_length=255)
+    description = models.CharField(
+        help_text="Short description for users", blank=True, max_length=255
+    )
     filter = models.ForeignKey(CheckFilter, on_delete=models.CASCADE)
 
     def is_complete(self, user: User):
         return self.filter.filter_object.process_filter(user)
 
     def is_complete_detail(self, user: User):
-        return self.filter.filter_object.audit_filter(User.objects.filter(pk=user.pk))[user.pk]
-
+        return self.filter.filter_object.audit_filter(User.objects.filter(pk=user.pk))[
+            user.pk
+        ]
 
     def __str__(self):
         return f"{self.name}: {self.comment}"
 
 
 class Step(models.Model):
-    name = models.CharField(help_text='Name', max_length=32)
+    name = models.CharField(help_text="Name", max_length=32)
     comment = models.CharField(max_length=255, blank=True)
-    description = models.CharField(help_text='Short description for users', blank=True, max_length=255)
-    body = models.TextField(help_text='Body text (django template snippet)', blank=True)
+    description = models.CharField(
+        help_text="Short description for users", blank=True, max_length=255
+    )
+    body = models.TextField(help_text="Body text (django template snippet)", blank=True)
     checks = SortedManyToManyField(Check, blank=True, related_name="steps")
-    is_selfguided = models.BooleanField(help_text="Overrides any Smart Filters assigned to this step.", default=False)
-    visibility = models.ForeignKey(Check,help_text="When configured, will hide this step from users unless this check resolves to true or this step is the next incomplete step",blank=True, null=True, on_delete=models.CASCADE)
+    is_selfguided = models.BooleanField(
+        help_text="Overrides any Smart Filters assigned to this step.", default=False
+    )
+    visibility = models.ForeignKey(
+        Check,
+        help_text="When configured, will hide this step from users unless this check resolves to true or this step is the next incomplete step",
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+    )
 
-    def is_complete(self, user: User, wizard: 'Wizard'):
+    def is_complete(self, user: User, wizard: "Wizard"):
         if self.is_selfguided:
-            return StepCompletion.objects.filter(user=user, step=self, wizard=wizard).exists()
+            return StepCompletion.objects.filter(
+                user=user, step=self, wizard=wizard
+            ).exists()
 
         result = True
         for check in self.checks.all():
@@ -80,7 +106,7 @@ class Step(models.Model):
 
         return result
 
-    def pct_complete(self, user:User, wizard: 'Wizard'):
+    def pct_complete(self, user: User, wizard: "Wizard"):
         if self.is_selfguided:
             return int(self.is_complete(user, wizard))
 
@@ -92,7 +118,7 @@ class Step(models.Model):
 
         return passed / total
 
-    def count_complete(self, user:User, wizard: 'Wizard'):
+    def count_complete(self, user: User, wizard: "Wizard"):
         if self.is_selfguided:
             return int(self.is_complete(user, wizard))
 
@@ -105,84 +131,103 @@ class Step(models.Model):
     def __str__(self):
         return f"{self.name}: {self.comment}"
 
+
 class Wizard(models.Model):
 
-    objects=WizardManager()
+    objects = WizardManager()
 
-    name = models.CharField(help_text='Name', max_length=32)
+    name = models.CharField(help_text="Name", max_length=32)
     comment = models.CharField(max_length=255, blank=True)
-    description = models.CharField(help_text='Short description for users', blank=True, max_length=255)
-    permalink = models.SlugField(help_text='user friendly permalink slug',blank=True,null=True)
-    body = models.TextField(help_text='Body text for final page (django template snippet)', blank=True)
-    auto_assigned = models.BooleanField(help_text="Will automatically assign to users when they meet visibility requirements", default=False)
+    description = models.CharField(
+        help_text="Short description for users", blank=True, max_length=255
+    )
+    permalink = models.SlugField(
+        help_text="user friendly permalink slug", blank=True, null=True
+    )
+    body = models.TextField(
+        help_text="Body text for final page (django template snippet)", blank=True
+    )
+    auto_assigned = models.BooleanField(
+        help_text="Will automatically assign to users when they meet visibility requirements",
+        default=False,
+    )
 
     states = models.ManyToManyField(
-        State,
-        blank=True,
-        help_text="States that can access this wizard."
-
+        State, blank=True, help_text="States that can access this wizard."
     )
 
     groups = models.ManyToManyField(
-        Group,
-        blank=True,
-        help_text="Groups that can access this wizard."
+        Group, blank=True, help_text="Groups that can access this wizard."
     )
 
     characters = models.ManyToManyField(
-        EveCharacter,
-        blank=True,
-        help_text="Characters that can access this wizard."
+        EveCharacter, blank=True, help_text="Characters that can access this wizard."
     )
 
     corporations = models.ManyToManyField(
         EveCorporationInfo,
         blank=True,
-        help_text="Corporations that can access this wizard."
+        help_text="Corporations that can access this wizard.",
     )
 
     alliances = models.ManyToManyField(
-        EveAllianceInfo,
-        blank=True,
-        help_text="Alliances that can access this wizard."
+        EveAllianceInfo, blank=True, help_text="Alliances that can access this wizard."
     )
 
     factions = models.ManyToManyField(
-        EveFactionInfo,
-        blank=True,
-        help_text="Factions that can access this wizard."
+        EveFactionInfo, blank=True, help_text="Factions that can access this wizard."
     )
-    
+
     steps = SortedManyToManyField(Step)
 
     @property
     def configured_visibility(self):
-        return self.states.exists() or self.groups.exists() or self.corporations.exists() or self.alliances.exists() or self.factions.exists() or self.characters.exists()
+        return (
+            self.states.exists()
+            or self.groups.exists()
+            or self.corporations.exists()
+            or self.alliances.exists()
+            or self.factions.exists()
+            or self.characters.exists()
+        )
 
     @property
     def users(self):
         state_users = User.objects.filter(profile__state__in=self.states.all())
         group_users = User.objects.filter(groups__in=self.groups.all())
-        char_users = User.objects.filter(character_ownerships__character__in=self.characters.all())
-
+        char_users = User.objects.filter(
+            character_ownerships__character__in=self.characters.all()
+        )
 
         corp_ids = []
         for corp in self.corporations.all():
             corp_ids.append(corp.corporation_id)
-        corp_users = User.objects.filter(character_ownerships__character__corporation_id__in=corp_ids)
+        corp_users = User.objects.filter(
+            character_ownerships__character__corporation_id__in=corp_ids
+        )
 
-        
         alliance_ids = []
         for alliance in self.alliances.all():
             alliance_ids.append(alliance.alliance_id)
-        alliance_users = User.objects.filter(character_ownerships__character__alliance_id__in=alliance_ids)
-        
+        alliance_users = User.objects.filter(
+            character_ownerships__character__alliance_id__in=alliance_ids
+        )
+
         faction_ids = []
         for faction in self.factions.all():
             faction_ids.append(faction.faction_id)
-        faction_users = User.objects.filter(character_ownerships__character__faction_id__in=faction_ids)
-        
-        return state_users | group_users | corp_users | alliance_users | faction_users | char_users
+        faction_users = User.objects.filter(
+            character_ownerships__character__faction_id__in=faction_ids
+        )
+
+        return (
+            state_users
+            | group_users
+            | corp_users
+            | alliance_users
+            | faction_users
+            | char_users
+        )
 
     def is_complete(self, user: User):
         result = True
@@ -190,11 +235,13 @@ class Wizard(models.Model):
             result = result and step.is_complete(user, self)
 
         if result:
-            ActionItem.objects.update_or_create(user=user, wizard=self, defaults={"completed": True})
+            ActionItem.objects.update_or_create(
+                user=user, wizard=self, defaults={"completed": True}
+            )
 
         return result
 
-    def pct_complete(self, user:User):
+    def pct_complete(self, user: User):
         if self.steps.count() == 0:
             return 1
 
@@ -203,7 +250,7 @@ class Wizard(models.Model):
 
         return passed / total
 
-    def count_complete(self, user:User):
+    def count_complete(self, user: User):
         passed = 0
         for step in self.steps.all():
             passed += step.is_complete(user, self)
@@ -213,17 +260,19 @@ class Wizard(models.Model):
     def __str__(self):
         return f"{self.name}: {self.comment}"
 
+
 class StepCompletion(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    wizard = models.ForeignKey(Wizard,on_delete=models.CASCADE)
-    step = models.ForeignKey(Step,on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    wizard = models.ForeignKey(Wizard, on_delete=models.CASCADE)
+    step = models.ForeignKey(Step, on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.user.username}: {self.wizard.name}: {self.step.name}"
 
+
 class ActionItem(models.Model):
-    wizard = models.ForeignKey(Wizard,on_delete=models.CASCADE)
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    wizard = models.ForeignKey(Wizard, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     completed = models.BooleanField(default=False)
 
     def __str__(self):

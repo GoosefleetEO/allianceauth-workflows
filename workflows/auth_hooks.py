@@ -10,6 +10,7 @@ from allianceauth.services.hooks import MenuItemHook, UrlHook
 from . import urls
 from .views import workflows_dashboard
 
+
 class WorkflowMenuItem(MenuItemHook):
     """This class ensures only authorized users will see the menu entry"""
 
@@ -34,7 +35,8 @@ class WorkflowMenuItem(MenuItemHook):
 
 class WorkflowDashboardHook(hooks.DashboardItemHook):
     def __init__(self):
-        super().__init__(workflows_dashboard,1)
+        super().__init__(workflows_dashboard, 1)
+
 
 @hooks.register("menu_item_hook")
 def register_menu():
@@ -49,6 +51,7 @@ def register_urls():
 
     return UrlHook(urls, "workflows", r"^flows/")
 
-@hooks.register('dashboard_hook')
+
+@hooks.register("dashboard_hook")
 def register_dashboard_hook():
     return WorkflowDashboardHook()

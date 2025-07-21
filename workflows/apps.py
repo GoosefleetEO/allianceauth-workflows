@@ -15,4 +15,5 @@ class OnboardingConfig(AppConfig):
     verbose_name = f"Workflows v{__version__}"
 
     def ready(self):
-        import workflows.signals
+        # AA Example App
+        import workflows.signals  # noqa: F401

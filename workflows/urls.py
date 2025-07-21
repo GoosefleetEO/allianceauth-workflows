@@ -9,11 +9,17 @@ from workflows import views
 app_name: str = "workflows"
 
 urlpatterns = [
-    path('', views.index, name='index'),
-    path('<int:wiz_id>', views.view_wizard_by_id, name='view_wizard_by_id'),
-    path('<int:wiz_id>/', views.view_wizard_by_id, name='view_wizard_by_id'),
-    path('<int:wiz_id>/<int:step_id>', views.view_wizard_by_id, name='view_wizard_by_id'),
-    path('<str:permalink>', views.view_wizard_by_permalink, name='view_wizard'),
-    path('<str:permalink>/', views.view_wizard_by_permalink, name='view_wizard'),
-    path('<str:permalink>/<int:step_id>', views.view_wizard_by_permalink, name='view_wizard'),
+    path("", views.index, name="index"),
+    path("<int:wiz_id>", views.view_wizard_by_id, name="view_wizard_by_id"),
+    path("<int:wiz_id>/", views.view_wizard_by_id, name="view_wizard_by_id"),
+    path(
+        "<int:wiz_id>/<int:step_id>", views.view_wizard_by_id, name="view_wizard_by_id"
+    ),
+    path("<str:permalink>", views.view_wizard_by_permalink, name="view_wizard"),
+    path("<str:permalink>/", views.view_wizard_by_permalink, name="view_wizard"),
+    path(
+        "<str:permalink>/<int:step_id>",
+        views.view_wizard_by_permalink,
+        name="view_wizard",
+    ),
 ]

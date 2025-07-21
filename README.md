@@ -8,12 +8,13 @@ Originally envisioned as a way to guide users through our auth process, this too
 
 ![image](https://github.com/user-attachments/assets/0788ea0c-da56-44ad-a045-306f32cecf82)
 
-
 Use this for whatever your heart desires, from corp applications to helping users resolve non-compliance with your audit protocols, to adding an altcorp to your alliance. If you can dream it, this can do it!
 
 ## Todo
+
 - Implement wizard builder in user-facing site
 - Implement user nag for available incomplete assigned wizards
+- Invalidate assigned wizards that are inaccessible to a user
 
 ## Installation
 

@@ -53,7 +53,7 @@ jobs:
 
   # Run PyPi Build Test
   pypi-build-test:
-    needs: [ test-coverage ]
+    needs: [ pre-commit ]
     name: PyPi Build Test
     runs-on: ubuntu-latest
 

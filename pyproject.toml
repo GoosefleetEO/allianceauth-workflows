@@ -40,8 +40,8 @@ dynamic = [
 dependencies = [
     "allianceauth>=4.3.1,<5",
 ]
-urls.Changelog = "https://github.com/gooseflockEO/allianceauth-workflows/blob/main/CHANGELOG.md"
-urls."Issue / Bug Reports" = "https://github.com/gooseflockEO/allianceauth-workflows/issues"
+urls.Changelog = "https://github.com/GoosefleetEO/allianceauth-workflows/blob/main/CHANGELOG.md"
+urls."Issue / Bug Reports" = "https://github.com/GoosefleetEO/allianceauth-workflows/issues"
 
 [tool.hatch.version]
 path = "workflows/__init__.py"

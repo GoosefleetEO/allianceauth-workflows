@@ -18,7 +18,7 @@ Use this for whatever your heart desires, from corp applications to helping user
 
 ## Installation
 
-`pip install -U git+https://github.com/GoosefleetEO/allianceauth-workflows.git`
+`pip install -U allianceauth-workflows`
 
 Add `'workflows'` to `INSTALLED_APPS`
 

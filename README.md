@@ -34,7 +34,7 @@ Through the admin panel, create checks, create steps that rely on those checks, 
 
 Uses filter code from allianceauth-secure-groups and allianceauth-auth-reports by Solar-Helix-Independent-Transport - without the smart filter framework from secure groups, none of this would be possible!
 
-#AI Policy
+## AI Policy
 
 LLM assisted pull requests will be closed without review as the GPL license is likely incompatible with AI-generated content.
 

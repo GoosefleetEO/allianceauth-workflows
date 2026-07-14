@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [In Development] - Unreleased
 
+## [0.1.8] - 2026-07-14
+
+### Added
+
+- AA v5 compatibility
+
 ## [0.1.7] - 2026-03-11
 
 ### Added
